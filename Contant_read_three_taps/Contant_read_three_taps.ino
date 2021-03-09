@@ -30,7 +30,7 @@ void setup()
 
   nano.setRegion(REGION_NORTHAMERICA); //Set to North America
 
-  nano.setReadPower(2000); //5.00 dBm. Higher values may caues USB port to brown out
+  nano.setReadPower(2700); //5.00 dBm. Higher values may caues USB port to brown out
   //Max Read TX Power is 27.00 dBm and may cause temperature-limit throttling
 //
 //  Serial.println(F("Press a key to begin scanning for tags."));
