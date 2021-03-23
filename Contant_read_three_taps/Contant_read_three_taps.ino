@@ -30,7 +30,7 @@ void setup()
 
   nano.setRegion(REGION_NORTHAMERICA); //Set to North America
 
-  nano.setReadPower(2700); //5.00 dBm. Higher values may caues USB port to brown out
+  nano.setReadPower(2300); //5.00 dBm. Higher values may caues USB port to brown out
   //Max Read TX Power is 27.00 dBm and may cause temperature-limit throttling
 //
 //  Serial.println(F("Press a key to begin scanning for tags."));
@@ -60,6 +60,8 @@ void loop()
       long timeStamp = nano.getTagTimestamp(); //Get the time this was read, (ms) since last keep-alive message
 
       byte tagEPCBytes = nano.getTagEPCBytes(); //Get the number of bytes of EPC from response
+
+     long phase =  nano.getTagPhase();
 
        String value;
 
@@ -100,6 +102,8 @@ void loop()
       Serial.print(value);
       Serial.print(",");
       Serial.print(rssi);
+     Serial.print(",");
+     Serial.print(phase);
      Serial.println();
       //Serial.println();
 //      Serial.print(F("]"));

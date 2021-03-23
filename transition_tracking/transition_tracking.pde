@@ -11,12 +11,15 @@ String[] mattagslist =
 {"e2001d8712171320c120","e2001d871271320b9f","e2001d8712461320db93", "e2001d8712401320d4a0"};
 //String[] boxtagslist = ;
 //define data buffer for each tag
-int buffer = 2000;
+int buffer = 40;
 //create 2d array to contain tag rssi data
 int[][] tagData = new int[mattagslist.length][buffer];
 
 
 String[] incoming; //data coming in from serial port
+
+//is the system recording the gesture? 1 - yes, 0 - no
+int recording = 0;
 
 
 void setup(){
@@ -28,6 +31,7 @@ void setup(){
 void draw(){
   background( 255 );
 
+startRecord();
   
   //read incoming data from serial
   if(myPort.available()>0){
@@ -43,24 +47,28 @@ if(val != null){
   //and if the data matches the format for incoming RFID tag info, populate incoming array
   //incoming array format == [tagID,RSSI]
   //if not about RFID tag, return whatever the message is
-  if(val.length() > 20 && val.length() < 30){ //this may need to be changed if EPC value is shorter on the tags used.
+  if(val.length() > 20 && val.length() < 34){ //this may need to be changed if EPC value is shorter on the tags used.
     incoming = split(val, ",");
   }else{
-    println(val);
+   // println(val);
   }
   
   float xOff;
   xOff = ((float) width/buffer);
 
-  
+
+ if(recording == 1){
   //make sure incoming has a value
   if(incoming!=null && incoming[0].length()>3){
-    int indexVal;
+    int indexVal =0;
+    boolean isIndex = false;
     //printArray(incoming);
     
-   
+
+
       for(int i=0; i<mattagslist.length; i++){
         incoming[1]=incoming[1].replaceAll("\\s","");
+        
         //println(tagData[0][0]);
         
          //println(i);
@@ -70,29 +78,44 @@ if(val != null){
         //println(indexVal);
         
         //println(Integer.parseInt(incoming[1]));
-        for(int j=1; j<buffer; j++){
           if(mattagslist[i].equals(incoming[0])){
+           
            indexVal = i;
+           isIndex = true;
+           println("yes!, " + indexVal);
+          }else{
+            isIndex = false;
+          }
+   if(isIndex = true){
+        for(int j=1; j<buffer; j++){
           tagData[indexVal][j]=tagData[indexVal][j-1];
-        tagData[indexVal][0] = Integer.parseInt(incoming[1]);       
-        //printArray(tagData[indexVal][4]);    
+            
+         
+        
         
       }
+       tagData[indexVal][0] = Integer.parseInt(incoming[1]);  
+       println(indexVal);
+        printArray(tagData[indexVal]);   
+        isIndex=false;
      
     }; 
-    // printArray(tagData);
      //println(tagData[0].length);
      //println(tagData[1][0]);
      //println(tagData[2][0]);
     
 }
+  }
 
+}else if(tagData.length>1){
+  printArray(tagData);
 }
 
   //drawLines(xOff);
   drawBoxes();
 }
 }
+
  
  void drawLines(float xSpace){
 //loop through however many active tags you've listed (mattagslist.length);
@@ -135,5 +158,13 @@ fill(map(tagData[1][0], -65,-50,255,0),150,0);
   rect(0,(3*height/4),width,(height));
   
 };
+
+  void startRecord(){
+       if (mousePressed && (mouseButton == LEFT)) {
+    recording = 1;
+  } else if (mousePressed && (mouseButton == RIGHT)) {
+    recording = 0;
+  }
+  };
    
  
