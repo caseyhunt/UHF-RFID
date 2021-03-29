@@ -14,6 +14,8 @@ String[] storage = new String[4];
 boolean reading = true;
 boolean recording = false;
 
+Table table;
+
 
 //String[] incoming = new String[4]; //data coming in from serial port
 
@@ -21,6 +23,12 @@ boolean recording = false;
 
 void setup(){
   size( 600, 500 );
+  table = new Table();
+  
+  table.addColumn("time");
+  table.addColumn("id");
+  table.addColumn("RSSI");
+  table.addColumn("phase");
   //String portName = Serial.list()[0];
   //myPort = new Serial(this, "COM5", 115200);
 }
@@ -61,7 +69,7 @@ void draw(){
 ////the storage array is formatted as groups of four values streamed into a single giant array
 ////[time of arrival, tagID, RSSI, phase, time of arrival, tagID, RSSI, phase.....]
 ////this block of code will return an error if there is a mismatch between the incoming length and the length being added to the array each time.
-if(incoming[1]!=null){
+if(incoming[1]!=null && recording){
   if(storage ==null){
     storage = incoming;
   }else{
@@ -69,9 +77,8 @@ if(incoming[1]!=null){
     l = l + 4;
     if (l%4 == 0){
       storage = add_element(l, storage, incoming);
-      printArray(storage);
       incoming[1] = null; // set the first position of incoming to null so this isn't triggered until the next reading comes in from the RFID reader
-     
+      
     }else{
       println("!Corruption error: problem committing data to storage. Restart run and try again.");
     }
@@ -84,12 +91,17 @@ if(incoming[1]!=null){
 }
 
 void mouseClicked(){
-  println("clicked");
+  println("recording started");
   if (reading == true && recording == false){
     recording = true;   
   } 
   else if (reading == true && recording == true){
     recording = false;
+    for(int i=0;i<9;i++){
+    println(storage[i]);
+    }
+    pushToTable(storage);
+    saveTable(table, "new.csv");
   }
 }
 
@@ -234,23 +246,35 @@ void mouseClicked(){
 
 //function to add element to array in Java
 
-    public static String[] add_element(int n, String[] myarray, String[] ele) 
-    { 
-     if( n != (ele.length + myarray.length)){
-      println("!Data Loss Warning: 'add_element' function mismatch between n param and array length"); 
-     }
+public static String[] add_element(int n, String[] myarray, String[] ele) 
+{ 
+ if( n != (ele.length + myarray.length)){
+  println("!Data Loss Warning: 'add_element' function mismatch between n param and array length"); 
+ }
  
-         String[] newArray = new String[n]; 
-        //copy original array into new array
-        for (int i = 0; i < myarray.length ; i++) {
-              newArray[i] = myarray[i]; 
-        }
-        for(int i = 0; i < ele.length; i++){
-          newArray[myarray.length+i] = ele[i];
-        }
+     String[] newArray = new String[n]; 
+    //copy original array into new array
+    for (int i = 0; i < myarray.length ; i++) {
+          newArray[i] = myarray[i]; 
+    }
+    for(int i = 0; i < ele.length; i++){
+      newArray[myarray.length+i] = ele[i];
+    }
  
  
-        return newArray; 
-    } 
-   
+    return newArray; 
+} 
+    
+void pushToTable(String[] data){
+  int nRows = data.length/4;
+  for(int i = 0; i<data.length;i+=4){
+    TableRow newRow = table.addRow();
+    newRow.setString("time", data[i]);
+    newRow.setString("id", data[i+1]);
+    newRow.setString("RSSI", data[i+2]);
+    newRow.setString("phase", data[i+3]);
+    
+  }
+  
+}
  
