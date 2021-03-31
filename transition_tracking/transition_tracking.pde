@@ -15,7 +15,7 @@ int buffer = 40;
 //create 2d array to contain tag rssi data
 int[][] tagData = new int[mattagslist.length][buffer];
 String[] storage = new String[4];
-boolean reading = true;
+boolean reading = false;
 boolean recording = false;
 boolean incomingTD = false;
 
@@ -57,6 +57,7 @@ void draw(){
 if(myPort.available()>0){
     serRaw = myPort.readStringUntil('\n');
     val = timeString + "," + serRaw;
+    print(val);
   }
   
   //if there is raw data coming in from serial...
@@ -66,17 +67,19 @@ if(serRaw != null){
   
  //populate incoming array from serial data. 
    incoming = split(val, ",");
-   printArray(incoming);
+  // printArray(incoming);
    
  //if the incoming serial data is in the format you're looking for make incomingTD = true
   if(incoming.length>3){ 
-    printArray(incoming);
+    //printArray(incoming);
+
     incomingTD = true;
     recordData();
+    reading = true;
   }else{
     incomingTD = false;
-    println(serRaw);
-    println(incoming.length);
+
+    //println(incoming.length);
     println("!Alert: incoming value not recorded as tag data. Is this a tag? If so, see if incoming.length matches your expected value. Ln62"); //this alert should show for all non-tag data i.e. "BAD CRC", etc.
   }
 
@@ -92,16 +95,17 @@ if(serRaw != null){
 //stops recording when the mouse button is clicked twice.
 //then, writes the data collected during the recording period to a .csv file
 void mouseClicked(){
-  println("recording started");
+  
   //if not recording and mouse is clicked: change state of recording to true, triggering the record protocols
-  if (reading == true && recording == false){
+  if (recording == false){
     recording = true;   
+    println("recording started");
     //if the table still has stuff in it, clear it out to start with a fresh one for the run.
-    if(table != null){
       table.clearRows();
-    }
+      println(table.getRowCount());
+      storage = null;
   } 
-  else if (reading == true && recording == true){ //if the mouse is clicked and recording is already happening, turn off recording and run pushToTable function! Then, save that table.
+  else if (recording == true){ //if the mouse is clicked and recording is already happening, turn off recording and run pushToTable function! Then, save that table.
     recording = false;
     recordingCount += 1;
     println("recording stopped");
@@ -158,7 +162,7 @@ void recordData() {
 if(recording){
   
   //if there's nothing in storage yet, add incoming 1:1
-  if(storage ==null){
+  if(storage ==null && incomingTD == true){
     storage = incoming;
   }else{   //otherwise use add_element to lengthen storage appropriately and add the incoming data
     int l = storage.length;
