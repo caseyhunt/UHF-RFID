@@ -25,6 +25,9 @@ int recordingCount = 0;
 
 Table table;
 
+//change this for each test.
+String testType = "baseline";
+
 
 //String[] incoming = new String[4]; //data coming in from serial port
 
@@ -113,7 +116,7 @@ void mouseClicked(){
     //println(storage[i]);
     //}
     pushToTable(storage);
-    String fileName = recordingCount + ".csv";
+    String fileName = testType + "/" + recordingCount + ".csv";
     saveTable(table, fileName);
   }
 }
@@ -143,14 +146,14 @@ public static String[] add_element(int n, String[] myarray, String[] ele)
     
 //function to add data to table. Usually done before saving the table.
 void pushToTable(String[] data){
-  int nRows = data.length/incoming.length;
   for(int i = 0; i<data.length;i+=incoming.length){
+    if(data.length>3){
     TableRow newRow = table.addRow();
     newRow.setString("time", data[i]);
     newRow.setString("id", data[i+1]);
     newRow.setString("RSSI", data[i+2]);
     newRow.setString("phase", data[i+3]);
-    
+    }
   }
   
 }
@@ -162,7 +165,8 @@ void recordData() {
 if(recording){
   
   //if there's nothing in storage yet, add incoming 1:1
-  if(storage ==null && incomingTD == true){
+  if(incomingTD == true){
+  if(storage ==null){
     storage = incoming;
   }else{   //otherwise use add_element to lengthen storage appropriately and add the incoming data
     int l = storage.length;
@@ -178,6 +182,6 @@ if(recording){
   }
   
 
-}
+}}
 }
  
