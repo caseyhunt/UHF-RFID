@@ -21,7 +21,7 @@ boolean incomingTD = false;
 
 String[] incoming = new String[4];
 
-
+int recordingCount = 0;
 
 Table table;
 
@@ -93,17 +93,24 @@ if(serRaw != null){
 //then, writes the data collected during the recording period to a .csv file
 void mouseClicked(){
   println("recording started");
+  //if not recording and mouse is clicked: change state of recording to true, triggering the record protocols
   if (reading == true && recording == false){
     recording = true;   
+    //if the table still has stuff in it, clear it out to start with a fresh one for the run.
+    if(table != null){
+      table.clearRows();
+    }
   } 
-  else if (reading == true && recording == true){
+  else if (reading == true && recording == true){ //if the mouse is clicked and recording is already happening, turn off recording and run pushToTable function! Then, save that table.
     recording = false;
+    recordingCount += 1;
     println("recording stopped");
     //for(int i=0;i<9;i++){
     //println(storage[i]);
     //}
     pushToTable(storage);
-    saveTable(table, "new.csv");
+    String fileName = recordingCount + ".csv";
+    saveTable(table, fileName);
   }
 }
 
@@ -130,6 +137,7 @@ public static String[] add_element(int n, String[] myarray, String[] ele)
     return newArray; 
 } 
     
+//function to add data to table. Usually done before saving the table.
 void pushToTable(String[] data){
   int nRows = data.length/incoming.length;
   for(int i = 0; i<data.length;i+=incoming.length){
@@ -142,6 +150,8 @@ void pushToTable(String[] data){
   }
   
 }
+
+//function to record data
 
 void recordData() {
 //if recording is true
