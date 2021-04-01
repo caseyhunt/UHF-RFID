@@ -15,15 +15,19 @@ int buffer = 40;
 //create 2d array to contain tag rssi data
 int[][] tagData = new int[mattagslist.length][buffer];
 String[] storage = new String[4];
+String[] runStorage = new String[4];
 boolean reading = false;
 boolean recording = false;
 boolean incomingTD = false;
+
+int[] fillColor = {255,0,0};
 
 String[] incoming = new String[4];
 
 int recordingCount = 0;
 
 Table table;
+Table runTable;
 
 //change this for each test.
 String testType = "baseline";
@@ -41,14 +45,31 @@ void setup(){
   table.addColumn("id");
   table.addColumn("RSSI");
   table.addColumn("phase");
+  
+  
+   runTable = new Table();
+  
+  runTable.addColumn("time");
+  runTable.addColumn("id");
+  runTable.addColumn("RSSI");
+  runTable.addColumn("phase");
   String portName = Serial.list()[0];
   myPort = new Serial(this, "COM5", 115200);
 }
 
 
 void draw(){
+  fill(fillColor[0],fillColor[1],fillColor[2]);
+  background(100,100,100);
+  rect(100,50,375,100);
+  fill(0);
+  if(reading==true){
+  text("recording started", 120,110);
+  }else{text("not recording", 120,110);}
   fill(255);
-  rect(25,25,50,50);
+  textSize(40);
+  text("recording number:",50,250);
+  text(recordingCount+1,450,250);
   //println(recording);
   //println(hour(), minute(), second(), millis());
   String timeString = hour() + " " + minute() + " " + second() + " " + millis();
@@ -73,12 +94,10 @@ if(serRaw != null){
   // printArray(incoming);
    
  //if the incoming serial data is in the format you're looking for make incomingTD = true
-  if(incoming.length>3){ 
+  if(incoming.length>3 && incoming[1] != null){ 
     //printArray(incoming);
-
     incomingTD = true;
     recordData();
-    reading = true;
   }else{
     incomingTD = false;
 
@@ -98,6 +117,21 @@ if(serRaw != null){
 //stops recording when the mouse button is clicked twice.
 //then, writes the data collected during the recording period to a .csv file
 void mouseClicked(){
+  if((100<mouseX  && mouseX <475) && (mouseY >50 && mouseY<150) && reading ==false){
+    reading = true;
+    fillColor[0] = 0;
+    fillColor[1] = 255;
+    fillColor[2] = 0;
+    pushToTable(runStorage, runTable);
+  }else if((mouseX >100 && mouseX <475) && (mouseY >50 && mouseY<150) && reading ==true){
+    reading = false;
+    fillColor[0] = 255;
+    fillColor[1] = 0;
+    fillColor[2] = 0;
+    pushToTable(runStorage, runTable);
+    String fileName2 = testType + "/runData" + ".csv";
+    saveTable(runTable, fileName2);
+  }else{
   
   //if not recording and mouse is clicked: change state of recording to true, triggering the record protocols
   if (recording == false){
@@ -105,7 +139,7 @@ void mouseClicked(){
     println("recording started");
     //if the table still has stuff in it, clear it out to start with a fresh one for the run.
       table.clearRows();
-      println(table.getRowCount());
+     
       storage = null;
   } 
   else if (recording == true){ //if the mouse is clicked and recording is already happening, turn off recording and run pushToTable function! Then, save that table.
@@ -115,9 +149,11 @@ void mouseClicked(){
     //for(int i=0;i<9;i++){
     //println(storage[i]);
     //}
-    pushToTable(storage);
+    pushToTable(storage, table);
     String fileName = testType + "/" + recordingCount + ".csv";
     saveTable(table, fileName);
+
+  }
   }
 }
 
@@ -145,15 +181,15 @@ public static String[] add_element(int n, String[] myarray, String[] ele)
 } 
     
 //function to add data to table. Usually done before saving the table.
-void pushToTable(String[] data){
+void pushToTable(String[] data, Table tbl){
+  if(incomingTD == true){
   for(int i = 0; i<data.length;i+=incoming.length){
-    if(data.length>3){
-    TableRow newRow = table.addRow();
+    TableRow newRow = tbl.addRow();
     newRow.setString("time", data[i]);
     newRow.setString("id", data[i+1]);
     newRow.setString("RSSI", data[i+2]);
     newRow.setString("phase", data[i+3]);
-    }
+  }
   }
   
 }
@@ -183,5 +219,22 @@ if(recording){
   
 
 }}
+if(reading){
+  if(incomingTD == true){
+  if(runStorage ==null){
+    runStorage = incoming;
+  }else{   //otherwise use add_element to lengthen storage appropriately and add the incoming data
+    int m = runStorage.length;
+    m = m + incoming.length;
+    //if the length of the new storage array is not divisible by length of incoming array, this indicates that there is a mismatch between the current length of the storage array and the length of the incoming array.
+    //Likely caused by data not being recorded, restart the trial. 
+    if (m%incoming.length == 0){
+      runStorage = add_element(m, runStorage, incoming);      
+    }else{
+      println("!Corruption error: problem committing data to storage. Restart run and try again.");
+    }
+    
+  }
 }
- 
+}
+}
