@@ -30,7 +30,7 @@ Table table;
 Table runTable;
 
 //change this for each test.
-String testType = "baseline";
+String testType = "baseline_02APR21_3";
 
 
 //String[] incoming = new String[4]; //data coming in from serial port
@@ -130,7 +130,11 @@ void mouseClicked(){
     fillColor[2] = 0;
     pushToTable(runStorage, runTable);
     String fileName2 = testType + "/runData" + ".csv";
-    saveTable(runTable, fileName2);
+    saveTable(runTable, fileName2);    
+    myPort.clear();
+      // Close the port
+    myPort.stop();
+    exit();
   }else{
   
   //if not recording and mouse is clicked: change state of recording to true, triggering the record protocols
@@ -152,6 +156,7 @@ void mouseClicked(){
     pushToTable(storage, table);
     String fileName = testType + "/" + recordingCount + ".csv";
     saveTable(table, fileName);
+    
 
   }
   }
@@ -182,8 +187,9 @@ public static String[] add_element(int n, String[] myarray, String[] ele)
     
 //function to add data to table. Usually done before saving the table.
 void pushToTable(String[] data, Table tbl){
-  if(incomingTD == true){
-  for(int i = 0; i<data.length;i+=incoming.length){
+
+  for(int i = 0; i<data.length;i+=4){
+      if(data[i+1]!=null){
     TableRow newRow = tbl.addRow();
     newRow.setString("time", data[i]);
     newRow.setString("id", data[i+1]);
