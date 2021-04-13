@@ -1,0 +1,22 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 1 issues that require attention
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+File: C:\Users\hsbbd\OneDrive\Documents\GitHub\UHF-RFID\lstm_repaired.py
+--------------------------------------------------------------------------------
+C:\Users\hsbbd\OneDrive\Documents\GitHub\UHF-RFID\lstm_repaired.py:145:0: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'C:\\Users\\hsbbd\\OneDrive\\Documents\\GitHub\\UHF-RFID\\lstm_repaired.py'
+ outputting to 'C:\\Users\\hsbbd\\OneDrive\\Documents\\GitHub\\UHF-RFID\\lstm_repaired1.py'
+--------------------------------------------------------------------------------
+
+144:0: INFO: Renamed 'tf.train.write_graph' to 'tf.io.write_graph'
+145:0: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+--------------------------------------------------------------------------------
+

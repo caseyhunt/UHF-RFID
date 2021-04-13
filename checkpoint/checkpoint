@@ -1,0 +1,2 @@
+model_checkpoint_path: "C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/checkpoint/har.ckpt"
+all_model_checkpoint_paths: "C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/checkpoint/har.ckpt"

@@ -10,7 +10,7 @@ import pandas as pd
 import os.path
 from os import path
 
-
+combined = pd.DataFrame()
 
 
 j = 0
@@ -28,7 +28,13 @@ while j<11:
         if path.exists(dataPath):    
             data = pd.read_csv(dataPath, header=0)
             data.insert(0, "activity", i, True)
-            print(data)
+            data.insert(0, "run", j, True)
+            combined = combined.append(data)
+            #print(data)
         i+=1
         
     j+=1
+
+combined.to_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined.csv')  
+
+#combined['activity'].value_counts().plot(kind='bar', title='Training examples by activity type');
