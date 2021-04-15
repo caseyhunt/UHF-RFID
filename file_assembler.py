@@ -13,15 +13,12 @@ from os import path
 combined = pd.DataFrame()
 
 
-j = 0
+j = 1
 
 while j<11:
-    
-    if j==0:
-        filePath ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_02APR21/'
-    else:
-        filePath = 'C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_02APR21_'
-        filePath = filePath + str(j) + "/"
+
+    filePath = 'C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_14APR21_'
+    filePath = filePath + str(j) + "/"
     i=1
     while i<12:
         dataPath = filePath + str(i) +'.csv'
@@ -35,6 +32,6 @@ while j<11:
         
     j+=1
 
-combined.to_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined.csv')  
+combined.to_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined_1.csv')  
 
 #combined['activity'].value_counts().plot(kind='bar', title='Training examples by activity type');

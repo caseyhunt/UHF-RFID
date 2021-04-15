@@ -21,8 +21,8 @@ import matplotlib.pyplot as plt
 i=1
 while i<12:
     x1,x2,x3,x4,y1,y2,y3,y4 = [], [], [],[],[],[] ,[] ,[]
-    data1 = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_02APR21/runData.csv', header=0)
-    x5 = data1["time"]
+    data1 = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_14APR21_1/runData.csv', header=0)
+    x5 = float(data1["time"])
     y5 = data1["RSSI"]
     # fig2, ay = plt.subplots(1,sharex=True, sharey=True)
     # ay.plot(x5, y5)
@@ -30,7 +30,7 @@ while i<12:
     
     plt.plot(x5,y5) # plotting t, a separately 
 
-    path ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_02APR21/'
+    path ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_14APR21_1/'
     dataPath = path + str(i) +'.csv'
     
     

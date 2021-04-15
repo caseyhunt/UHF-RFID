@@ -12,7 +12,7 @@ import os.path
 from os import path
 
 
-filePath ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined_cleaned.csv'
+filePath ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined_1.csv'
 data = pd.read_csv(filePath, header=0)
 d = [" ","run",	"activity",	"time",	"id","RSSI","phase"]
 cleaned_df = pd.DataFrame(columns=d)
@@ -45,7 +45,7 @@ while i<len(data):
 
 print(cleaned_df)
 cleaned_df["activity"].plot.hist()
-#cleaned_df.to_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined_noduplicates.csv')  
+cleaned_df.to_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined_1_noduplicates.csv')  
 # print(data.iloc[0])
 # print(len(data))
 

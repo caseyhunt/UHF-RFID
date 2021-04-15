@@ -14,7 +14,7 @@ while i<12:
     
     
 
-    path ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_02APR21_10/'
+    path ='C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/salutation_14APR21_10/'
     dataPath = path + str(i) +'.csv'
     
     
