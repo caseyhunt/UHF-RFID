@@ -1,122 +1,103 @@
-import processing.serial.*;
-String val;
-Serial myPort;
-//define all tags of interest
-String[] tagslist = {"f20019748130188056da","e20019748158183058f5","e2001974817418305915", "e20019748164183058f8"};
-//define data buffer for each tag
-int buffer = 2000;
-//create 2d array to contain tag rssi data
-int[][] tagData = new int[tagslist.length][buffer];
-
-
-String[] incoming; //data coming in from serial port
-
+String[] list = new String[3];
+int k = 5;
+int y0=110, dy0=120;
+int wide = 300;
+float counter;
+float[] data = new float[wide];
+float[] data1 = new float[wide];
+float[] data2 = new float[wide];
+float[] data3 = new float[wide];
 
 void setup(){
-  size( 600, 500 );
-  String portName = Serial.list()[0];
-  myPort = new Serial(this, "COM5", 115200);
+ size(600,450);
+ background(200,200,0);
+
 }
 
-void draw(){
-  background( 255 );
+void draw(){  // if new data from arduino Ain raw as string:
+ background(200,200,0);
+list[0] = "1000";
+list[1] = "200";
+list[2] = "50";
+counter +=.1;
+
+noStroke();
+fill(255,255,255);
+rect(150,10,k,100);
+rect(150,120,k,100);
+rect(150,230,k,100);
+rect(150,340,k,100);
+stroke(0,0,0);
+noFill();
+beginShape();
+for(int i=0; i<k;i++){
+  float y = map(data[i],-1,1,0,70);
+  println(y);
+  vertex(i+150,y+30);
+  
+}
+endShape();
+
+beginShape();
+for(int i=0; i<k;i++){
+  float y = map(data1[i],-1,1,0,70);
+  println(y);
+  vertex(i+150,y+140);
+  
+}
+endShape();
+
+beginShape();
+for(int i=0; i<k;i++){
+  float y = map(data2[i],-1,1,0,70);
+  println(y);
+  vertex(i+150,y+250);
+  
+}
+endShape();
+
+beginShape();
+for(int i=0; i<k;i++){
+  float y = map(data3[i],-1,1,0,70);
+  println(y);
+  vertex(i+150,y+360);
+  
+}
+endShape();
+
+
+
+float val2 = map(int(list[1]),0,1023,0,100);
+float val3 = map(int(list[2]),0,1023,0,100);
+
+//line(k,y0+0*dy0,k,y0+0*dy0-val1);
+//line(k,y0+1*dy0,k,y0+1*dy0-val2);
+//line(k,y0+2*dy0,k,y0+2*dy0-val3);
+//stroke(255);
+//line(k+1,y0+0*dy0,k+1,y0+0*dy0-100);
+//line(k+1,y0+1*dy0,k+1,y0+1*dy0-100);
+//line(k+1,y0+2*dy0,k+1,y0+2*dy0-100);
+
+
+if ( k< wide ){
+
+  data[k] = sin(counter);
+  data1[k] = cos(counter);
+  data2[k] = sin(counter/2);
+  data3[k] = cos(counter/2);
 
   
-  //read incoming data from serial
-  if(myPort.available()>0){
-    val = myPort.readStringUntil('\n');
+  k++;
+}else{
+  data[wide-1] = sin(counter);
+  data1[wide-1] = cos(counter);
+  data2[wide -1] = sin(counter/2);
+  data3[wide-1] = cos(counter/2);
+  for(int i=0; i<wide-1;i++){
+  data[i] = data[i+1];
+  data1[i] = data1[i+1];
+  data2[i] = data2[i+1];
+  data3[i] = data3[i+1];
   }
-  
-  //if the data coming in from serial is legit
-if(val != null){
-  
-  //and the data matches the format for incoming RFID tag info, populate incoming array
-  //if not an RFID tag, return whatever the message is
-  if(val.length() == 26){
-    incoming = split(val, ",");
-    
-  }else{
-    println(val);
-    println(val.length());
-  }
-  
-  float xOff;
-  xOff = ((float) width/buffer);
-
-  
-  //make sure incoming has a value
-  if(incoming!=null && incoming[0].length()>3){
-    int indexVal;
-    //printArray(incoming);
-    
-   
-      for(int i=0; i<tagslist.length; i++){
-        incoming[1]=incoming[1].replaceAll("\\s","");
-        //println(tagData[0][0]);
-        
-         //println(i);
-      
-       
-        //println(incoming[1]);
-        //println(indexVal);
-        
-        //println(Integer.parseInt(incoming[1]));
-        for(int j=1; j<buffer; j++){
-          if(tagslist[i].equals(incoming[0])){
-           indexVal = i;
-          tagData[indexVal][j]=tagData[indexVal][j-1];
-        tagData[indexVal][0] = Integer.parseInt(incoming[1]);       
-        //printArray(tagData[indexVal][4]);    
-        
-      }
-     
-    }; 
-    // printArray(tagData);
-     //println(tagData[0].length);
-     //println(tagData[1][0]);
-     //println(tagData[2][0]);
-    
-}
-
-}
-
-  drawLines(xOff,4);
 }
 }
- 
- void drawLines(float xSpace, float yOff){
-         for(int i=0; i<tagslist.length; i++){
-        //incoming[1]=incoming[1].replaceAll("\\s","");
-        //println(tagData[0][0]);
-        
-         //println(i);
-        float xSpacing;
-        //= (width/buffer);
-        
-        xSpacing=xSpace;
-       
-        //println(incoming[1]);
-        //println(indexVal);
-        
-        //println(Integer.parseInt(incoming[1]));
-        for(int j=1;j<buffer; j++){
-          //line(width-(xSpacing*j),map(tagData[0][j], -60,-30,height,0),width-(xSpacing*(j-1)),map(tagData[0][j-1], -60,-30,height,0));
-            stroke(i*70, 100+i*20,200);
-            line(10+i*100, 0, 10+i*100, map(tagData[i][j-1], -60,-30,height,0));
-          //point(width,(map(tagData[i][buffer-j], -60,-30,height,0)+yOff));
-          //point(width-(xSpacing*(j)),(map(tagData[i][buffer-j-1], -60,-30,height,0)+yOff));
-          //if(tagslist[i].equals(incoming[0])){       
-        //printArray(tagData[indexVal][4]);    
-        
-      };
-     
-     
-    }; 
-    // printArray(tagData);
-     //println(tagData[0].length);
-     //println(tagData[1][0]);
-     //println(tagData[2][0]);
-    
-};
-   
- 

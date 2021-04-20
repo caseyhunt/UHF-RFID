@@ -18,11 +18,11 @@ from sklearn.model_selection import train_test_split
 
 tf.compat.v1.disable_eager_execution()
 
-train = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/test_1.csv', header=0)
-test = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/train_1.csv', header=0)
+train = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/training-2-4-7-10.csv', header=0)
+test = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/testing-2-4-7-10.csv', header=0)
 data = pd.read_csv('C:/Users/hsbbd/OneDrive/Documents/GitHub/UHF-RFID/transition_tracking/combined_noduplicates_no3.csv', header=0)
 
-n_time_steps = 70
+n_time_steps = 120
 n_features = 2
 step = 1
 segments_train = []
@@ -34,18 +34,18 @@ RANDOM_SEED = 42
 
 for i in range(0, len(train) - n_time_steps, step):
     RSSI_train = train['RSSI'].values[i: i + n_time_steps] 
-    #phase_train = data['phase'].values[i: i + n_time_steps]
-    # stddev= np.std(RSSI_train)
-    # for j in range(0, n_time_steps):
-    #     if j==0:
-    #         std_train = [stddev]
-    #     else:
-    #         std_train.append(stddev)
+    phase_train = data['phase'].values[i: i + n_time_steps]
+    stddev= np.std(RSSI_train)
+    for j in range(0, n_time_steps):
+        if j==0:
+            std_train = [stddev]
+        else:
+            std_train.append(stddev)
     id_train = train['id'].values[i: i + n_time_steps]
     label_train = stats.mode(train['activity'][i: i + n_time_steps])[0][0]
     #label = data['activity'][i]
     print(label_train)
-    segments_train.append([RSSI_train,id_train])
+    segments_train.append([RSSI_train, id_train])
     labels_train.append(label_train)
 
 print(np.array(segments_train).shape)
@@ -60,17 +60,17 @@ print(np.array(reshaped_segments_train).shape)
 
 for i in range(0, len(test) - n_time_steps, step):
     RSSI_test = test['RSSI'].values[i: i + n_time_steps] 
-   # phase_test = data['phase'].values[i: i + n_time_steps]
-    # stddev= np.std(RSSI_test)
-    # for j in range(0, n_time_steps):
-    #     if j==0:
-    #         std_test = [stddev]
-    #     else:
-    #         std_test.append(stddev)
+    phase_test = data['phase'].values[i: i + n_time_steps]
+    stddev= np.std(RSSI_test)
+    for j in range(0, n_time_steps):
+        if j==0:
+            std_test = [stddev]
+        else:
+            std_test.append(stddev)
     id_test = test['id'].values[i: i + n_time_steps]
     label_test = stats.mode(test['activity'][i: i + n_time_steps])[0][0]
     #label = data['activity'][i]
-    segments_test.append([RSSI_test,id_test])
+    segments_test.append([RSSI_test, id_test])
     labels_test.append(label_test)
 
 print(np.array(segments_test).shape)
@@ -95,8 +95,8 @@ print(RSSI_train.shape)
 # RSSI_train, RSSI_test, phase_train, phase_test = train_test_split(
 #         reshaped_segments, labels, test_size=0.2, random_state=RANDOM_SEED)
 
-N_CLASSES = 11
-N_HIDDEN_UNITS = 100
+N_CLASSES = 4
+N_HIDDEN_UNITS = 64
 def create_LSTM_model(inputs):
     W = {
         'hidden': tf.Variable(tf.random.normal([n_features, N_HIDDEN_UNITS])),
@@ -146,7 +146,7 @@ optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=LEARNING_RATE).minimi
 correct_pred = tf.equal(tf.argmax(input=pred_softmax, axis=1), tf.argmax(input=Y, axis=1))
 accuracy = tf.reduce_mean(input_tensor=tf.cast(correct_pred, dtype=tf.float32))
 
-N_EPOCHS = 70
+N_EPOCHS = 130
 BATCH_SIZE = 1024
 saver = tf.compat.v1.train.Saver()
 
@@ -209,7 +209,8 @@ plt.xlabel('Training Epoch')
 plt.ylim(0)
 plt.show()
 
-LABELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+#LABELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+LABELS = [2,4,7,10]
 max_test = np.argmax(phase_test, axis=1)
 max_predictions = np.argmax(predictions, axis=1)
 confusion_matrix = metrics.confusion_matrix(max_test, max_predictions)
