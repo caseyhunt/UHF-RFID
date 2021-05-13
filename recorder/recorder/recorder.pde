@@ -29,8 +29,13 @@ int recordingCount = 0;
 Table table;
 Table runTable;
 
+int ms = 0;
+int prevSec;
+String hr, min, sec;
+int timeHolder = 0;
+
 //change this for each test.
-String testType = "baseline_02APR21_3";
+String testType =  hour() + " " + minute() + " " + second() + "" + month() + "-" + day()+ " ";
 
 
 //String[] incoming = new String[4]; //data coming in from serial port
@@ -55,6 +60,8 @@ void setup(){
   runTable.addColumn("phase");
   String portName = Serial.list()[0];
   myPort = new Serial(this, "COM5", 115200);
+  
+  prevSec = second();
 }
 
 
@@ -72,7 +79,33 @@ void draw(){
   text(recordingCount+1,450,250);
   //println(recording);
   //println(hour(), minute(), second(), millis());
-  String timeString = hour() + " " + minute() + " " + second() + " " + millis();
+  if(prevSec != second()){
+    prevSec = second();
+    timeHolder = millis();
+    ms = 0;
+  }else{
+    ms = millis() - timeHolder;
+  }
+  
+  if (hour()<10){
+     hr = "0" + hour();
+  }else{
+    hr = str(hour());
+  } 
+  
+  if (minute()<10){
+    min = "0" + minute();
+  }else{
+    min = str(minute());
+  }
+  
+    if (second()<10){
+    sec = "0" + second();
+  }else{
+    sec = str(second());
+  }
+  
+  String timeString = hr + ":" +min + ":" + sec + "." + ms;
   incoming = null;
   
   
@@ -102,7 +135,7 @@ if(serRaw != null){
     incomingTD = false;
 
     //println(incoming.length);
-    println("!Alert: incoming value not recorded as tag data. Is this a tag? If so, see if incoming.length matches your expected value. Ln62"); //this alert should show for all non-tag data i.e. "BAD CRC", etc.
+//    println("!Alert: incoming value not recorded as tag data. Is this a tag? If so, see if incoming.length matches your expected value. Ln62"); //this alert should show for all non-tag data i.e. "BAD CRC", etc.
   }
 
 
