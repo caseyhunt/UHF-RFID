@@ -1,0 +1,59 @@
+1. collect data with camera and recording sketch
+2. syncronize data using clock time from video
+3. label data using encoding, remove any data that is not associated with a labeled pose
+
+Standing
+1 - Jumping Jacks
+2 - Stand
+3 - Windmill
+4 - Squats
+5 - Lunges
+6 - Leg Lift Left
+7 - Leg Lift Right
+
+Laying
+1 - Laying
+2 - Crunches
+3 - Reverse Crunches
+4 - Pelvic Lifts/Bridge
+5 - Child's Pose
+6 - Push Ups
+
+Sitting
+1 - Sitting Crosslegged
+2 - Butterfly
+3 - Wide Leg Center
+4 - Left Stretch
+5 - Right Stretch
+6 - Toe Touch
+7 - Sitting Straight Legged
+
+4. label tags as their ID using encoding
+
+1 - e2001d8712171320c120
+2 - e2001d8712401320d4a0
+3 - e2001d8712461320db93
+4 - e2001d871271320b9f
+
+5. split into four files, one for each tag. remove duplicates
+
+6. use moving_avg_variance.py to generate non-overlapping window files
+
+7. combine all four non-overlapping window files into a moving_avg_variance_collected file, SORT BY TIME
+
+8. feed the moving_avg_variance_collected file into the lstm_repaired1.py file. 
+n_time_steps = 50
+n_features = 3
+step = 1
+epocs = 120
+
+9. change N_CLASSES to reflect the number of exercises in the gesture set
+
+10. run the training file an export the confusion matrix and progress graph
+
+
+standing:
+94% loss .9
+
+laying
+93% loss .8

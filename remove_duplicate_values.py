@@ -18,6 +18,7 @@ d = [" ","run",	"activity",	"time",	"id","RSSI","phase"]
 cleaned_df = pd.DataFrame(columns=d)
 i = 0
 j=0
+
 while i<len(data):
     if i == 0:
         cleaned_df.loc[j] = data.loc[i]
